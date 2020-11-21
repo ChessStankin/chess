@@ -1,0 +1,3 @@
+.idea
+web/venv
+web/src/chess/chess/secrets.py
