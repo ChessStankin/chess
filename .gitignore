@@ -1,3 +1,4 @@
 .idea
 venv
 web/src/chess/chess/secrets.py
+.vscode
