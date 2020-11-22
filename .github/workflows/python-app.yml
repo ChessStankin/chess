@@ -8,18 +8,15 @@ on:
 
 jobs:
   build:
-
+    env:
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      POSTGRESQL_USER: ${{ secrets.POSTGRESQL_USER }}
+      POSTGRESQL_PASSWORD: ${{ secrets.POSTGRESQL_PASSWORD }}
+      POSTGRESQL_DATABASE: ${{ secrets.POSTGRESQL_DATABASE }}
+      POSTGRESQL_HOST: ${{ secrets.POSTGRESQL_HOST }}
+      POSTGRESQL_PORT: ${{ secrets.POSTGRESQL_PORT }} 
     runs-on: ubuntu-latest
-
     steps:
-    - env:
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
-        POSTGRESQL_USER: ${{ secrets.POSTGRESQL_USER }}
-        POSTGRESQL_PASSWORD: ${{ secrets.POSTGRESQL_PASSWORD }}
-        POSTGRESQL_DATABASE: ${{ secrets.POSTGRESQL_DATABASE }}
-        POSTGRESQL_HOST: ${{ secrets.POSTGRESQL_HOST }}
-        POSTGRESQL_PORT: ${{ secrets.POSTGRESQL_PORT }}
-        
     - uses: actions/checkout@v2
     - name: Set up Python 3.9
       uses: actions/setup-python@v2
