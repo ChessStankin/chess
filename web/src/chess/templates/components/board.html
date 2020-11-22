@@ -2,21 +2,26 @@
 <html>
     <head>
         <link rel="stylesheet" href="{% static 'libs/chessboardjs-1.0.0/css/chessboard-1.0.0.css' %}">
-        <img srcset="libs/chessboardjs-1.0.0/img/chesspieces/wikipedia">
-        <script src="{% static 'libs/chessboardjs-1.0.0/js/chessboard-1.0.0.js' %}"></script>   
-        <script src="{% static 'libs/jQuery/jquery-3.5.1.js' %}"></script> 
+        <link rel="stylesheet" href="{% static 'libs/chessboard-arrows/chessboard-arrows.css' %}">
+        <img srcset="{% static 'libs/chessboardjs-1.0.0/img/chesspieces/wikipedia' %}">
+        <script src="{% static 'libs/chessboardjs-1.0.0/js/chessboard-1.0.0.js' %}"></script>
+        <script src="{% static 'libs/jQuery/jquery-3.5.1.js' %}"></script>
+        <script src="{% static 'libs/chessboard-arrows/chessboard-arrows.js' %}"></script>
     </head>
-    <div id="board2" style="width: 400px"></div>
-    <button id="startBtn">Start Position</button>
-    <button id="clearBtn">Clear Board</button>    
+    <body>
+        <div id="board_wrapper">
+            <canvas id="primary_canvas" width="392" height="392" ></canvas>
+            <canvas id="drawing_canvas"  width="392" height="392" ></canvas>
+            <div id="board" style="width: 400px; height: 400px;"></div>
+        </div>    
+    </body>
 </html>
 <script>
-    var board2 = Chessboard('board2', {
+    let board = Chessboard('board', {
         draggable: true,
-        dropOffBoard: 'trash',
         sparePieces: true
       })
-      
+      ChessboardArrows('board_wrapper');
       $('#startBtn').on('click', board2.start)
       $('#clearBtn').on('click', board2.clear)
 </script>
