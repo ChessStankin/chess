@@ -10,10 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
-import chess.secrets as storage
-
+import os
 from pathlib import Path
 from typing import List
+
+try:
+    import chess.secrets as storage
+except:
+    pass
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = storage.SECRET_KEY
+SECRET_KEY = os.environ["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -76,11 +80,11 @@ WSGI_APPLICATION = 'chess.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': storage.POSTGRESQL_DATABASE,
-        'USER': storage.POSTGRESQL_USER,
-        'PASSWORD': storage.POSTGRESQL_PASSWORD,
-        'HOST': storage.POSTGRESQL_HOST,
-        'PORT': storage.POSTGRESQL_PORT,
+        'NAME': os.environ["POSTGRESQL_DATABASE"],
+        'USER':  os.environ["POSTGRESQL_USER"],
+        'PASSWORD': os.environ["POSTGRESQL_PASSWORD"],
+        'HOST': os.environ["POSTGRESQL_HOST"],
+        'PORT': os.environ["POSTGRESQL_PORT"],
     }
 }
 
