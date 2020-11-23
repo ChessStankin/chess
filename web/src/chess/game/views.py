@@ -4,3 +4,4 @@ from django.http import HttpRequest, HttpResponse
 
 def test(request: HttpRequest) -> HttpResponse:
     return render(request, 'game/test.html')
+
