@@ -3,3 +3,4 @@
 venv
 web/src/chess/chess/secrets.py
 web/src/chess/chess/__pycache__
+web/src/chess/account/__pycache__

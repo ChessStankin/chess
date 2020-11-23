@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect
 from django.http import HttpRequest, HttpResponse
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from web.src.chess.account.forms import LoginForm, RegForm
+from .forms import LoginForm, RegForm
 
 
 def reg_page(request: HttpRequest) -> HttpResponse:
@@ -32,11 +33,19 @@ def login_page(request: HttpRequest) -> HttpResponse:
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('/')
+                return redirect('profile')
         else:
             context['login_form'] = login_form
     return render(request, 'account/login_page.html', context)
 
 
-def logout_func(request: HttpRequest):
-    logout(request)
+def logout_func(request: HttpRequest) -> HttpResponse:
+    if request.method == 'POST':
+        logout(request)
+        return HttpResponse('Ok')
+    return HttpResponse('Bad')
+
+
+@login_required
+def profile_page(request: HttpRequest) -> HttpResponse:
+    return render(request, 'account/profile_page.html')

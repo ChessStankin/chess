@@ -8,10 +8,11 @@ class RegForm(forms.Form):
         required=True,
         widget=forms.TextInput(
             attrs={
-                'placeholder': 'Логин'
+                'placeholder': 'Логин',
+                'class': 'form-control'
             }
         ),
-        label='Логин'
+        label='Имя пользователя'
     )
     email = forms.CharField(
         max_length=128,
@@ -19,10 +20,11 @@ class RegForm(forms.Form):
         required=True,
         widget=forms.EmailInput(
             attrs={
-                'placeholder': 'E-mail'
+                'placeholder': 'E-mail',
+                'class': 'form-control'
             }
         ),
-        label='E-mail'
+        label='Email'
     )
     password = forms.CharField(
         max_length=128,
@@ -30,7 +32,8 @@ class RegForm(forms.Form):
         required=True,
         widget=forms.PasswordInput(
             attrs={
-                'placeholder': 'Пароль'
+                'placeholder': 'Пароль',
+                'class': 'form-control'
             }
         ),
         label='Пароль'
@@ -41,7 +44,8 @@ class RegForm(forms.Form):
         required=True,
         widget=forms.PasswordInput(
             attrs={
-                'placeholder': 'Повторите пароль'
+                'placeholder': 'Повторите пароль',
+                'class': 'form-control'
             }
         ),
         label='Повторите пароль'
@@ -61,6 +65,7 @@ class LoginForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 'placeholder': 'Логин',
+                'class': 'form-control'
             }
         ),
         label='Логин'
@@ -72,6 +77,7 @@ class LoginForm(forms.Form):
         widget=forms.PasswordInput(
             attrs={
                 'placeholder': 'Пароль',
+                'class': 'form-control'
             }
         ),
         label='Пароль'
