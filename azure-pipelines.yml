@@ -14,4 +14,7 @@ jobs:
       runOnce:
         deploy:
           steps:
-          - script: ./deploy.sh
+            - task: Bash@3
+              inputs:
+                targetType: 'inline'
+                script: 'sh test.sh'
