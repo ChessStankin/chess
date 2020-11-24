@@ -18,14 +18,11 @@ jobs:
             inputs:
               targetType: 'inline'
               script: |
-                set -o errexit
-                set -o nounset
-                
                 if [ -d "/chess" ] 
                 then
-                    git clone https://$(USER):$(TOKEN)@github.com/ChessStankin/chess.git /chess
-                else
                     cd /chess
                     git pull https://$(USER):$(TOKEN)@github.com/ChessStankin/chess.git master
+                else
+                    git clone https://$(USER):$(TOKEN)@github.com/ChessStankin/chess.git /home/azureuser/chess
                 fi
                 
