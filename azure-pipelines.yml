@@ -18,9 +18,9 @@ jobs:
             inputs:
               targetType: 'inline'
               script: |
-                if [ -d "/chess" ] 
+                if [ -d "/home/azureuser/chess" ] 
                 then
-                    cd /chess
+                    cd /home/azureuser/chess
                     git pull https://$(USER):$(TOKEN)@github.com/ChessStankin/chess.git master
                 else
                     git clone https://$(USER):$(TOKEN)@github.com/ChessStankin/chess.git /home/azureuser/chess
