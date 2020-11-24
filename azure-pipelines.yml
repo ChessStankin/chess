@@ -25,4 +25,9 @@ jobs:
                 else
                     git clone https://$(USER):$(TOKEN)@github.com/ChessStankin/chess.git /home/azureuser/chess
                 fi
-                
+          - task: DockerCompose@0
+            inputs:
+              containerregistrytype: 'Container Registry'
+              dockerComposeFile: '/home/azureuser/chess/docker-compose.yml'
+              action: 'Run a Docker Compose command'
+              dockerComposeCommand: 'up -d --build'
