@@ -29,5 +29,5 @@ jobs:
             inputs:
               targetType: 'inline'
               script: |
-                cd /home/asureuser/chess
+                cd /home/azureuser/chess
                 sudo docker-compose up -d --build
