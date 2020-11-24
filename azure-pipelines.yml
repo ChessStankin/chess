@@ -36,9 +36,10 @@ jobs:
                 printf '\nDocker installed successfully\n\n'
                 
                 printf 'Waiting for Docker to start...\n\n'
-                sleep 5
+                sleep 15
                 
                 # Docker Compose
+
                 sudo wget --output-document=/usr/local/bin/docker-compose "https://github.com/docker/compose/releases/download/$(wget --quiet --output-document=- https://api.github.com/repos/docker/compose/releases/latest | grep --perl-regexp --only-matching '"tag_name": "\K.*?(?=")')/run.sh"
                 sudo chmod +x /usr/local/bin/docker-compose
                 sudo wget --output-document=/etc/bash_completion.d/docker-compose "https://raw.githubusercontent.com/docker/compose/$(docker-compose version --short)/contrib/completion/bash/docker-compose"
@@ -48,9 +49,9 @@ jobs:
                 
                 if [ -d "/chess" ] 
                 then
-                    git clone https://$(USER):$(TOKEN)@github.com/ChessStankin/chess.git
+                    git clone https://$(USER):$(TOKEN)@github.com/ChessStankin/chess.git /chess
                 else
-                    cd chess
+                    cd /chess
                     git pull https://$(USER):$(TOKEN)@github.com/ChessStankin/chess.git master
                 fi
                 
