@@ -1,13 +1,12 @@
 import stockfish
-
+import os
+dir_stockfish = os.path.abspath('stockfish64.exe')
 from stockfish import Stockfish
+stockfish = Stockfish(dir_stockfish)
 
-stockfish = Stockfish("/Users/bak-h/stockfish/stockfish64")
-#chessEngine = Engine('./stockfish_64', param={'Threads': 5, 'Ponder': None})
-
-def get_next_move(fen: str) -> str:
-    return stockfish.get_best_move(fen)
-
+def get_next_move(fen1,fen2: str) -> str:
+    stockfish.set_position([fen1, fen2])
+    return stockfish.get_best_move()
 
 def is_best_move(move: str) -> bool:
-        return stockfish.is_move_correct(str)
+    return stockfish.is_move_correct(move)
