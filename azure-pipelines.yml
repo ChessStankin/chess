@@ -30,4 +30,10 @@ jobs:
               targetType: 'inline'
               script: |
                 cd /home/azureuser/chess
+                export SECRET_KEY=$(SECRET_KEY)
+                export POSTGRESQL_USER=$(POSTGRESQL_USER)
+                export POSTGRESQL_PASSWORD=$(POSTGRESQL_PASSWORD)
+                export POSTGRESQL_DATABASE=$(POSTGRESQL_DATABASE)
+                export POSTGRESQL_HOST=$(POSTGRESQL_HOST)
+                export POSTGRESQL_PORT=$(POSTGRESQL_PORT)
                 sudo docker-compose up -d --build
