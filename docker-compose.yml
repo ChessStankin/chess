@@ -6,6 +6,13 @@ services:
     build:
       context: ./web
       dockerfile: Dockerfile
+    environment:
+        - SECRET_KEY=${SECRET_KEY}
+        - POSTGRESQL_USER=${POSTGRESQL_USER}
+        - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
+        - POSTGRESQL_DATABASE=${POSTGRESQL_DATABASE}
+        - POSTGRESQL_HOST=${POSTGRESQL_HOST}
+        - POSTGRESQL_PORT=${POSTGRESQL_PORT}
     ports:
      - "8000:8000"
     command: python3.9 src/chess/manage.py runserver 0.0.0.0:8000
