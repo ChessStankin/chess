@@ -34,15 +34,20 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 # Application definition
+CREATED_APPS: List[str] = [
+    'game.apps.GameConfig'
+] 
 
-INSTALLED_APPS: List[str] = [
+DOWNLOADED_APPS: List[str] = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-]
+] 
+
+INSTALLED_APPS: List[str] = DOWNLOADED_APPS + CREATED_APPS
 
 MIDDLEWARE: List[str] = [
     'django.middleware.security.SecurityMiddleware',
