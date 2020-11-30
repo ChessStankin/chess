@@ -4,4 +4,4 @@ venv
 web/src/chess/chess/secrets.py
 **/__pycache__
 *.env
-.vs/
+**/.vs/
