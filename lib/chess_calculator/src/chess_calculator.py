@@ -1,9 +1,15 @@
 import stockfish
 import os
-dir_stockfish = os.path.abspath('stockfish64.exe')
-from stockfish import Stockfish
-stockfish = Stockfish(dir_stockfish)
+import platform
 
+dir_stockfishWin = os.path.abspath('stockfish64.exe')
+dir_stockfishLin = os.path.abspath('stockfish')
+
+stockfish = stockfish.Stockfish(dir_stockfishWin) 
+
+if platform.system() == "Linux":
+    stockfish = stockfish.Stockfish(dir_stockfishLin)
+    
 def get_next_move(fen1,fen2: str) -> str:
     stockfish.set_position([fen1, fen2])
     return stockfish.get_best_move()
