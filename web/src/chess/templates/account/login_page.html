@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="card" style="width: 30%">
+    <div class="card-header">
+        Вход
+    </div>
+    <div class="card-body">
+        <form method="post" action="">
+            {% csrf_token %}
+            {% for field in login_form.visible_fields %}
+            <div class="form-group">
+                <label>{{ field.label }}</label>
+                {{ field }}
+            </div>
+            {% endfor %}
+            <input class="btn btn-primary w-100" type="submit" value="Войти"/>
+        </form>
+        <div class="w-100 text-center">
+            <a href="/account/reg/">Зарегистрироваться</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

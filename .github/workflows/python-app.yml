@@ -1,0 +1,38 @@
+name: Django CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    env:
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      POSTGRESQL_USER: ${{ secrets.POSTGRESQL_USER }}
+      POSTGRESQL_PASSWORD: ${{ secrets.POSTGRESQL_PASSWORD }}
+      POSTGRESQL_DATABASE: ${{ secrets.POSTGRESQL_DATABASE }}
+      POSTGRESQL_HOST: ${{ secrets.POSTGRESQL_HOST }}
+      POSTGRESQL_PORT: ${{ secrets.POSTGRESQL_PORT }} 
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r web/requirements.txt
+        pip install -r lib/chess_calculator/requirements.txt
+    - name: Run Django Tests
+      run: |
+        python web/src/chess/manage.py test
+    - name: Azure
+      uses: Azure/pipelines@v1
+      with: 
+        azure-devops-project-url: 'https://dev.azure.com/bondarevyaroslav/chess'
+        azure-pipeline-name: 'ChessStankin.chess' # name of the Azure pipeline to be triggered
+        azure-devops-token: '${{ secrets.AZURE_DEVOPS_TOKEN }}'
