@@ -12,7 +12,7 @@ def reg_page(request) -> HttpResponse:
     context = {'reg_form': RegForm()}
     if request.user.is_authenticated:
         messages.add_message(request, messages.ERROR, "Вы авторизированы.")
-        return redirect('/account/profile/')
+        return redirect('profile')
 
     if request.method == 'POST':
         reg_form = RegForm(request.POST)
@@ -27,7 +27,7 @@ def reg_page(request) -> HttpResponse:
                     login(request, user)
                     messages.add_message(request, messages.SUCCESS,
                                          "Вы зарегистрировались!")
-                    return redirect('/account/profile/')
+                    return redirect('profile')
                 else:
                     messages.add_message(request, messages.ERROR,
                                          "Пользователь с такими данными существует.")
@@ -42,18 +42,28 @@ def login_page(request: HttpRequest) -> HttpResponse:
         login_form = LoginForm(request.POST)
         context['login_form'] = login_form
         if login_form.is_valid():
-            username = login_form.data['username']
+            username_or_email = login_form.data['username_or_email']
             password = login_form.data['password']
-            user = authenticate(request, username=username, password=password)
+            user = authenticate(username=username_or_email, password=password)
             if user is not None:
                 login(request, user)
+                messages.add_message(request, messages.SUCCESS, "Авторизация выполнена.")
                 return redirect('profile')
+            else:
+                user = authenticate(email=username_or_email, password=password)
+                if user is not None:
+                    login(request, user)
+                    messages.add_message(request, messages.SUCCESS, "Авторизация выполнена.")
+                    return redirect('profile')
+            messages.add_message(request, messages.ERROR, "Некорректные данные.")
     return render(request, 'account/login_page.html', context)
 
 
 def logout_func(request: HttpRequest) -> HttpResponse:
     if request.method == 'POST':
         logout(request)
+        messages.add_message(request, messages.SUCCESS,
+                             "Вы вышли из аккаунта.")
         return HttpResponse('Ok')
     return HttpResponse('Bad')
 
