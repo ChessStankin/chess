@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import os
 from pathlib import Path
 from typing import List
+from django.contrib import messages
 
 try:
     import chess.secrets as storage
@@ -128,3 +129,10 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "collected_static")
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 LOGIN_URL = '/account/login'
+
+MESSAGE_TAGS = {
+    messages.INFO: 'text-info',
+    messages.SUCCESS: 'text-success',
+    messages.WARNING: 'text-warning',
+    messages.ERROR: 'text-danger',
+}
