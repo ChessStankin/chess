@@ -54,8 +54,8 @@ class RegForm(forms.Form):
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(
-        max_length=20,
+    username_or_email = forms.CharField(
+        max_length=128,
         min_length=3,
         required=True,
         widget=forms.TextInput(
@@ -63,7 +63,7 @@ class LoginForm(forms.Form):
                 'class': 'form-control'
             }
         ),
-        label='Логин'
+        label='Имя пользователя / Email'
     )
     password = forms.CharField(
         max_length=128,
