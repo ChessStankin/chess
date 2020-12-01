@@ -4,7 +4,7 @@ def random_value():
     value = random.randint(0,9);
     return value;
 
-def random_position():
+def get_odd_start_position():
     string_position = '';
     names1 = [1,1,2,2,2,1,1,2,2,2];
     names2 = ['k','q','r','n','b','K','Q','R','N','B'];
