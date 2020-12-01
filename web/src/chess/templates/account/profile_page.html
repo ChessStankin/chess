@@ -1,12 +1,4 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="mb-3">Привет, {{ request.user.username }}</div>
-<div class="btn btn-danger" onclick="logout()">Выйти</div>
-<script>
-    function logout() {
-        $.post('/account/logout/', {'csrfmiddlewaretoken': '{{ csrf_token }}'}).then(function(){
-            window.location.href = '/account/login/'
-        })
-    }
-</script>
 {% endblock %}

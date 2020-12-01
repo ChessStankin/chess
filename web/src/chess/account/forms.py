@@ -8,7 +8,6 @@ class RegForm(forms.Form):
         required=True,
         widget=forms.TextInput(
             attrs={
-                'placeholder': 'Логин',
                 'class': 'form-control'
             }
         ),
@@ -20,7 +19,6 @@ class RegForm(forms.Form):
         required=True,
         widget=forms.EmailInput(
             attrs={
-                'placeholder': 'E-mail',
                 'class': 'form-control'
             }
         ),
@@ -32,7 +30,6 @@ class RegForm(forms.Form):
         required=True,
         widget=forms.PasswordInput(
             attrs={
-                'placeholder': 'Пароль',
                 'class': 'form-control'
             }
         ),
@@ -44,7 +41,6 @@ class RegForm(forms.Form):
         required=True,
         widget=forms.PasswordInput(
             attrs={
-                'placeholder': 'Повторите пароль',
                 'class': 'form-control'
             }
         ),
@@ -64,7 +60,6 @@ class LoginForm(forms.Form):
         required=True,
         widget=forms.TextInput(
             attrs={
-                'placeholder': 'Логин',
                 'class': 'form-control'
             }
         ),
@@ -76,7 +71,6 @@ class LoginForm(forms.Form):
         required=True,
         widget=forms.PasswordInput(
             attrs={
-                'placeholder': 'Пароль',
                 'class': 'form-control'
             }
         ),
