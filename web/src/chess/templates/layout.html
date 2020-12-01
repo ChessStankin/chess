@@ -5,11 +5,49 @@
         <script src="{% static 'libs/jQuery/jquery-3.5.1.js' %}"></script> 
         <script src="{% static 'libs/bootstrap-4.5.3/js/bootstrap.bundle.min.js' %}"></script>
         <link rel="stylesheet" href="{% static 'libs/bootstrap-4.5.3/css/bootstrap.min.css' %}">
+
+        <style>
+            .sidebar {
+                border-right: 1px solid rgba(0, 0, 0, .125);
+            }
+            .sidebar-header {
+                border-bottom: 1px solid rgba(0, 0, 0, .125);
+            }
+        </style>
+
+        <script>
+            function logout() {
+                $.post('/account/logout/', {'csrfmiddlewaretoken': '{{ csrf_token }}'}).then(function(){
+                    window.location.href = '/account/login/'
+                })
+            }
+        </script>
     </head>
     <body>
-        <div>
-            {% block content %}
-            {% endblock %}
-        </div>
+        <div class="container-fluid">
+            <div class="row navbar-light">
+                <div class="col-2 sticky-top vh-100 sidebar px-2">
+                    <div class="sidebar-header py-3">
+                        <div class="px-3">
+                            Chess
+                        </div>
+                    </div>
+                    <div class="navbar-nav p-3 d-flex flex-column">
+                        <a class="nav-link {% if request.path == '/game/test/' %} active {% endif %}" href="/game/test/">Игра</a>
+                        {% if user.is_authenticated %}
+                        <div class="nav-link" style="cursor: pointer" onclick="logout()">Выход</div>
+                        {% else %}
+                        <a class="nav-link {% if request.path == '/account/login/' %} active {% endif %}" href="/account/login/">Вход</a>
+                        <a class="nav-link {% if request.path == '/account/reg/' %} active {% endif %}" href="/account/reg/">Регистрация</a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-8 d-flex align-items-center justify-content-center">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+                <div class="col2"></div>
+            </div>
+        </div>     
     </body>
 </html>
