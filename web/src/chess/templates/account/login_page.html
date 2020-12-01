@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="card" style="width: 30%">
+<div class="card w-50">
     <div class="card-header">
         Вход
     </div>
@@ -13,7 +13,7 @@
                 {{ field }}
             </div>
             {% endfor %}
-            <input class="btn btn-primary w-100" type="submit" value="Войти"/>
+            <input class="mt-4 btn btn-outline-primary w-100" type="submit" value="Войти"/>
         </form>
         <div class="w-100 text-center">
             <a href="/account/reg/">Зарегистрироваться</a>
