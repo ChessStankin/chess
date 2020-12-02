@@ -7,18 +7,24 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from .forms import LoginForm, RegForm
 from .models import AuthJWT
-from random import randint
+from types import FunctionType
 
 
-def check_jwt(function):
-    print(type(function))
-
+def check_jwt(function: FunctionType):
     def inner(request, *args, **kwargs):
-        if request.user.authjwt.is_expired():
-            request.user.authjwt.refresh()
+        jwt_cookie = request.COOKIES.get('jwt')
+        print(jwt_cookie)
+        try:
+            jwt_model = AuthJWT.objects.get(user=request.user)
+            if jwt_model.is_expired() or jwt_cookie != jwt_model.token:
+                logout(request)
+                messages.add_message(request, messages.ERROR, "JWT истек или некорректен.")
+                return redirect('/account/login/')
+            return function(request, *args, **kwargs)
+        except AuthJWT.DoesNotExist:
             logout(request)
-            messages.add_message(request, messages.ERROR, "JWT истек и был обновлен.")
-        return function(request, *args, **kwargs)
+            messages.add_message(request, messages.ERROR, "JWT отсутствует.")
+            return redirect('/account/login/')
     return inner
 
 
@@ -60,9 +66,19 @@ def login_page(request: HttpRequest) -> HttpResponse:
             password = login_form.data['password']
             user = authenticate(username=username_or_email, password=password)
             if user is not None:
+                try:
+                    jwt_model = AuthJWT.objects.get(user=user)
+                    print('exist: ', jwt_model.token)
+                    jwt_model.refresh()
+                    print('refreshed: ', jwt_model.token)
+                except AuthJWT.DoesNotExist:
+                    jwt_model = AuthJWT.objects.create(user=user)
+                    print('created: ', jwt_model.token)
                 login(request, user)
+                response = redirect('profile')
+                response.set_cookie('jwt', jwt_model.token)
                 messages.add_message(request, messages.SUCCESS, "Авторизация выполнена.")
-                return redirect('profile')
+                return response
             else:
                 user = authenticate(email=username_or_email, password=password)
                 if user is not None:
@@ -70,10 +86,7 @@ def login_page(request: HttpRequest) -> HttpResponse:
                     messages.add_message(request, messages.SUCCESS, "Авторизация выполнена.")
                     return redirect('profile')
             messages.add_message(request, messages.ERROR, "Некорректные данные.")
-    response = render(request, 'account/login_page.html', context)
-    if request.COOKIES.get('kek') is None:
-        response.set_cookie('kek', str(randint(100000, 9999999)))
-    return response
+    return render(request, 'account/login_page.html', context)
 
 
 def logout_func(request: HttpRequest) -> HttpResponse:
@@ -86,5 +99,6 @@ def logout_func(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
+@check_jwt
 def profile_page(request: HttpRequest) -> HttpResponse:
     return render(request, 'account/profile_page.html')
