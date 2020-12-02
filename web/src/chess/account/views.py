@@ -6,9 +6,23 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from .forms import LoginForm, RegForm
+from .models import AuthJWT
+from random import randint
 
 
-def reg_page(request) -> HttpResponse:
+def check_jwt(function):
+    print(type(function))
+
+    def inner(request, *args, **kwargs):
+        if request.user.authjwt.is_expired():
+            request.user.authjwt.refresh()
+            logout(request)
+            messages.add_message(request, messages.ERROR, "JWT истек и был обновлен.")
+        return function(request, *args, **kwargs)
+    return inner
+
+
+def reg_page(request: HttpRequest) -> HttpResponse:
     context = {'reg_form': RegForm()}
     if request.user.is_authenticated:
         messages.add_message(request, messages.ERROR, "Вы авторизированы.")
@@ -56,7 +70,10 @@ def login_page(request: HttpRequest) -> HttpResponse:
                     messages.add_message(request, messages.SUCCESS, "Авторизация выполнена.")
                     return redirect('profile')
             messages.add_message(request, messages.ERROR, "Некорректные данные.")
-    return render(request, 'account/login_page.html', context)
+    response = render(request, 'account/login_page.html', context)
+    if request.COOKIES.get('kek') is None:
+        response.set_cookie('kek', str(randint(100000, 9999999)))
+    return response
 
 
 def logout_func(request: HttpRequest) -> HttpResponse:
