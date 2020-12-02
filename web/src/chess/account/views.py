@@ -13,19 +13,33 @@ from types import FunctionType
 def check_jwt(function: FunctionType):
     def inner(request, *args, **kwargs):
         jwt_cookie = request.COOKIES.get('jwt')
-        print(jwt_cookie)
         try:
             jwt_model = AuthJWT.objects.get(user=request.user)
             if jwt_model.is_expired() or jwt_cookie != jwt_model.token:
                 logout(request)
-                messages.add_message(request, messages.ERROR, "JWT истек или некорректен.")
+                messages.add_message(request, messages.ERROR, "Сессия устарела.")
                 return redirect('/account/login/')
             return function(request, *args, **kwargs)
         except AuthJWT.DoesNotExist:
             logout(request)
-            messages.add_message(request, messages.ERROR, "JWT отсутствует.")
+            messages.add_message(request, messages.ERROR, "Сессия устарела.")
             return redirect('/account/login/')
     return inner
+
+
+def jwt_authenticate(request, user):
+    try:
+        jwt_model = AuthJWT.objects.get(user=user)
+        jwt_model.refresh()
+    except AuthJWT.DoesNotExist:
+        jwt_model = AuthJWT.objects.create(user=user)
+    response = redirect('profile')
+    remember_me = request.POST.get('remember_me')
+    if remember_me is None:
+        response.set_cookie('jwt', jwt_model.token, samesite='Lax')
+    else:
+        response.set_cookie('jwt', jwt_model.token, samesite='Lax', max_age=604800)
+    return response
 
 
 def reg_page(request: HttpRequest) -> HttpResponse:
@@ -43,11 +57,12 @@ def reg_page(request: HttpRequest) -> HttpResponse:
                 password = reg_form.data['password']
                 email = reg_form.data['email']
                 if not User.objects.filter(Q(username=username) | Q(email=email)).exists():
-                    user = User.objects.create_user(username, email, password)
-                    login(request, user)
+                    user = User.objects.create_user(username=username, email=email, password=password)
+                    response = jwt_authenticate(request, user)
+                    login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                     messages.add_message(request, messages.SUCCESS,
                                          "Вы зарегистрировались!")
-                    return redirect('profile')
+                    return response
                 else:
                     messages.add_message(request, messages.ERROR,
                                          "Пользователь с такими данными существует.")
@@ -65,27 +80,14 @@ def login_page(request: HttpRequest) -> HttpResponse:
             username_or_email = login_form.data['username_or_email']
             password = login_form.data['password']
             user = authenticate(username=username_or_email, password=password)
+            if user is None:
+                user = authenticate(email=username_or_email, password=password)
             if user is not None:
-                try:
-                    jwt_model = AuthJWT.objects.get(user=user)
-                    print('exist: ', jwt_model.token)
-                    jwt_model.refresh()
-                    print('refreshed: ', jwt_model.token)
-                except AuthJWT.DoesNotExist:
-                    jwt_model = AuthJWT.objects.create(user=user)
-                    print('created: ', jwt_model.token)
+                response = jwt_authenticate(request, user)
                 login(request, user)
-                response = redirect('profile')
-                response.set_cookie('jwt', jwt_model.token)
                 messages.add_message(request, messages.SUCCESS, "Авторизация выполнена.")
                 return response
-            else:
-                user = authenticate(email=username_or_email, password=password)
-                if user is not None:
-                    login(request, user)
-                    messages.add_message(request, messages.SUCCESS, "Авторизация выполнена.")
-                    return redirect('profile')
-            messages.add_message(request, messages.ERROR, "Некорректные данные.")
+        messages.add_message(request, messages.ERROR, "Некорректные данные.")
     return render(request, 'account/login_page.html', context)
 
 
