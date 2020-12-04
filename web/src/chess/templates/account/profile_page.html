@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="card w-50">
+<div class="d-flex w-100 align-items-start justify-content-end">
+<div class="card w-50 mr-4">
     <div class="card-header">
         Профиль
     </div>
@@ -35,5 +36,16 @@
             </form>
         </div>
     </div>
+</div>
+<div class="card w-25">
+    <div class="card-header">
+        Статистика
+    </div>
+    <div class="card-body">
+        <div>Побед: {{ wins }}</div>
+        <div>Поражений: {{ losses }}</div>
+        <div>W/L: {{ wl }}</div>
+    </div>
+</div>
 </div>
 {% endblock %}

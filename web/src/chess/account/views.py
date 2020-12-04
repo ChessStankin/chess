@@ -8,6 +8,7 @@ from django.db.models import Q
 from .forms import LoginForm, RegForm, EmailForm, PasswordEditForm
 from .models import AuthJWT
 from types import FunctionType
+from random import randint
 
 
 def check_jwt(function: FunctionType):
@@ -109,8 +110,11 @@ def logout_func(request: HttpRequest) -> HttpResponse:
 def profile_page(request: HttpRequest) -> HttpResponse:
     context = {
         'email_form': EmailForm(initial={'email': request.user.email}),
-        'pwd_form': PasswordEditForm()
+        'pwd_form': PasswordEditForm(),
+        'wins': randint(10, 1000),
+        'losses': randint(10, 1000),
     }
+    context['wl'] = round(context['wins'] / context['losses'], 2)
 
     if request.method == 'POST':
         print(request.POST)
