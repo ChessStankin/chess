@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect
 from django.http import HttpRequest, HttpResponse
 from django.contrib import messages
-from django.contrib.auth import logout, authenticate, login
+from django.contrib.auth import logout, authenticate, login, update_session_auth_hash
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from .forms import LoginForm, RegForm
+from .forms import LoginForm, RegForm, EmailForm, PasswordEditForm
 from .models import AuthJWT
 from types import FunctionType
+from random import randint
 
 
 def check_jwt(function: FunctionType):
@@ -73,6 +74,10 @@ def reg_page(request: HttpRequest) -> HttpResponse:
 
 def login_page(request: HttpRequest) -> HttpResponse:
     context = {'login_form': LoginForm()}
+    if request.user.is_authenticated:
+        messages.add_message(request, messages.ERROR, "Вы авторизированы.")
+        return redirect('profile')
+
     if request.method == 'POST':
         login_form = LoginForm(request.POST)
         context['login_form'] = login_form
@@ -103,4 +108,56 @@ def logout_func(request: HttpRequest) -> HttpResponse:
 @login_required
 @check_jwt
 def profile_page(request: HttpRequest) -> HttpResponse:
-    return render(request, 'account/profile_page.html')
+    context = {
+        'email_form': EmailForm(initial={'email': request.user.email}),
+        'pwd_form': PasswordEditForm(),
+        'wins': randint(10, 1000),
+        'losses': randint(10, 1000),
+    }
+    context['wl'] = round(context['wins'] / context['losses'], 2)
+
+    if request.method == 'POST':
+        if 'email' in request.POST:
+            email_form = EmailForm(request.POST)
+            context['email_form'] = email_form
+            if email_form.is_valid():
+                new_email = email_form.data['email']
+                if new_email != request.user.email:
+                    if not User.objects.filter(email=new_email).exists():
+                        user = request.user
+                        user.email = new_email
+                        user.save()
+                        messages.add_message(request, messages.SUCCESS,
+                                             "Привязанная почта изменена.")
+                        return redirect('profile')
+                    else:
+                        messages.add_message(request, messages.ERROR,
+                                             "Данная почта привязана к другому аккаунту.")
+                else:
+                    messages.add_message(request, messages.WARNING,
+                                         "Данная почта совпадает со старой.")
+
+        if 'current_password' in request.POST:
+            pwd_form = PasswordEditForm(request.POST)
+            context['pwd_form'] = pwd_form
+            if pwd_form.is_valid():
+                if request.user.check_password(pwd_form.data['current_password']):
+                    if pwd_form.is_password_new():
+                        if pwd_form.passwords_equal():
+                            request.user.set_password(pwd_form.data['new_password'])
+                            request.user.save()
+                            update_session_auth_hash(request, request.user)
+                            messages.add_message(request, messages.SUCCESS,
+                                                 "Пароль изменен.")
+                            return redirect('profile')
+                        else:
+                            messages.add_message(request, messages.ERROR,
+                                                 "Пароли не совпадают.")
+                    else:
+                        messages.add_message(request, messages.WARNING,
+                                             "Новый пароль совпадает со старым.")
+                else:
+                    messages.add_message(request, messages.ERROR,
+                                         "Неправильный текущий пароль")
+
+    return render(request, 'account/profile_page.html', context)

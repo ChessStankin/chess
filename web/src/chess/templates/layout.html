@@ -30,7 +30,16 @@
             $(document).ready(function() {
                 $(".toast").toast({delay: 30000});
                 $(".toast").toast('show');
+                $("#id_email").prop('disabled', true);
             });
+            function toggleEmailDisabled() {
+                $("#id_email").prop('disabled', (_, val) => !val);
+                $("#toggleEmailBtn").text(function() {
+                    if ($(this).text() == "Изменить") return "Отменить";
+                    else return "Изменить";
+                });
+                $("#confirmEmail").toggle();
+            }
         </script>
     </head>
     <body>

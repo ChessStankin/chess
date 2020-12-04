@@ -1,4 +1,51 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="mb-3">Привет, {{ request.user.username }}</div>
+<div class="d-flex w-100 align-items-start justify-content-end">
+<div class="card w-50 mr-4">
+    <div class="card-header">
+        Профиль
+    </div>
+    <div class="card-body">
+        <div class="form-group">
+            <label>Имя пользователя</label>
+            <input class="form-control" type="text" value="{{ request.user.username }}" disabled>
+        </div>
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="form-group mb-4">
+                <label>{{ email_form.email.label }}</label>
+                <div class="d-flex">
+                    {{ email_form.email }}
+                    <button type="button" id="toggleEmailBtn" onclick="toggleEmailDisabled()" class="ml-3 btn btn-outline-primary">Изменить</button>
+                    <input id="confirmEmail" class="ml-3 btn btn-outline-primary" style="display: none;" type="submit" value="Сохранить"/>
+                </div>
+            </div>
+        </form> 
+
+        <button class="btn btn-outline-primary w-100" data-toggle="collapse" href="#collapsePassword">Изменить пароль</button>
+        <div class="collapse mt-3" id="collapsePassword">
+            <form class="m-0" method="post" action="">
+                {% csrf_token %}
+                {% for field in pwd_form.visible_fields %}
+                <div class="form-group">
+                    <label>{{ field.label }}</label>
+                    {{ field }}
+                </div>
+                {% endfor %}
+                <input class="btn btn-outline-primary w-100" type="submit" value="Сохранить">
+            </form>
+        </div>
+    </div>
+</div>
+<div class="card w-25">
+    <div class="card-header">
+        Статистика
+    </div>
+    <div class="card-body">
+        <div>Побед: {{ wins }}</div>
+        <div>Поражений: {{ losses }}</div>
+        <div>W/L: {{ wl }}</div>
+    </div>
+</div>
+</div>
 {% endblock %}
