@@ -117,7 +117,6 @@ def profile_page(request: HttpRequest) -> HttpResponse:
     context['wl'] = round(context['wins'] / context['losses'], 2)
 
     if request.method == 'POST':
-        print(request.POST)
         if 'email' in request.POST:
             email_form = EmailForm(request.POST)
             context['email_form'] = email_form
@@ -130,6 +129,7 @@ def profile_page(request: HttpRequest) -> HttpResponse:
                         user.save()
                         messages.add_message(request, messages.SUCCESS,
                                              "Привязанная почта изменена.")
+                        return redirect('profile')
                     else:
                         messages.add_message(request, messages.ERROR,
                                              "Данная почта привязана к другому аккаунту.")
@@ -149,6 +149,7 @@ def profile_page(request: HttpRequest) -> HttpResponse:
                             update_session_auth_hash(request, request.user)
                             messages.add_message(request, messages.SUCCESS,
                                                  "Пароль изменен.")
+                            return redirect('profile')
                         else:
                             messages.add_message(request, messages.ERROR,
                                                  "Пароли не совпадают.")
