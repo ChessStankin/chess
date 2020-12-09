@@ -37,16 +37,21 @@ ALLOWED_HOSTS = ['127.0.0.1',
                  '20.54.75.41']
 
 # Application definition
+CREATED_APPS: List[str] = [
+    'game.apps.GameConfig',
+    'account.apps.AccountConfig'
+] 
 
-INSTALLED_APPS: List[str] = [
+DOWNLOADED_APPS: List[str] = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'account'
-]
+] 
+
+INSTALLED_APPS: List[str] = DOWNLOADED_APPS + CREATED_APPS
 
 MIDDLEWARE: List[str] = [
     'django.middleware.security.SecurityMiddleware',

@@ -52,8 +52,8 @@
                         </div>
                     </div>
                     <div class="navbar-nav p-3 d-flex flex-column">
-                        <a class="nav-link {% if request.path == '/game/test/' %} active {% endif %}" href="/game/test/">Игра</a>
                         {% if user.is_authenticated %}
+                        <a class="nav-link {% if request.path == '/game/test/' %} active {% endif %}" href="/game/test/">Игра</a>
                         <a class="nav-link {% if request.path == '/account/profile/' %} active {% endif %}" href="/account/profile/">Профиль</a>
                         <div class="nav-link" style="cursor: pointer" onclick="logout()">Выход</div>
                         {% else %}
