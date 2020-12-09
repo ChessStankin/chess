@@ -3,6 +3,7 @@ import random
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse, HttpResponseNotFound
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def _get_random_color() -> ColorEnum:
@@ -22,6 +23,7 @@ def _get_bot_user() -> User:
     return bot
 
 
+@login_required(login_url='/account/login/')
 def test(request: HttpRequest) -> HttpResponse:
     return render(request, 'game/test.html')
 
@@ -50,20 +52,15 @@ def create_board(request: HttpRequest) -> HttpResponse:
 # each game contains unique id
 def game_workflow(request: HttpRequest, game_id: int) -> HttpResponse:
     if request.method == 'POST':
-        # does game exist or not ended?
         game: Game = Game.objects.filter(id=game_id).first()
         if game is None or game.is_ended == True:
             return HttpResponseNotFound()
-      
-        # get players for some tasks
         player1: Player = game.player1
         player2: Player = game.player2
         if player1 is None or player2 is None:
             return HttpResponseNotFound()
-        # i'm planning to get fen and move from front
         fen_str: str = request.POST['fen']
         move_str: str = request.POST['move']
-        # we need somehow to get move color
         color: str = ColorEnum.black
         player_maked_move: Player = None
 
@@ -71,25 +68,13 @@ def game_workflow(request: HttpRequest, game_id: int) -> HttpResponse:
             player_maked_move: Player = player1
         else:
             player_maked_move: Player = player2
-
         if player_maked_move is None:
             return HttpResponseNotFound()
-
-        # so, we need to get move from this game, which belongs to player, who've maked move
-
         last_move: Move = Move.objects.filter(game_id=game.id, player_id=player_maked_move.id).order_by('-id').first()
-
         if last_move is not None:
             piece_id_last: Piece = last_move.piece_id_current
             move_str_last: str = last_move.move_str_current
         else:
             piece_id_last: Piece = None
             move_str_last: str = ''
-        
-        # now saving new move
-
-        # is it default move?
-
-        # is it promotion move?
-
-        # is it checkmate?
+    

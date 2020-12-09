@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import os
 from pathlib import Path
 from typing import List
+from django.contrib import messages
 
 try:
     import chess.secrets as storage
@@ -31,11 +32,14 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1',
+                 '0.0.0.0',
+                 '20.54.75.41']
 
 # Application definition
 CREATED_APPS: List[str] = [
-    'game.apps.GameConfig'
+    'game.apps.GameConfig',
+    'account.apps.AccountConfig'
 ] 
 
 DOWNLOADED_APPS: List[str] = [
@@ -122,7 +126,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
@@ -131,3 +135,15 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "collected_static")
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 LOGIN_URL = '/account/login'
+
+MESSAGE_TAGS = {
+    messages.INFO: 'text-info',
+    messages.SUCCESS: 'text-success',
+    messages.WARNING: 'text-warning',
+    messages.ERROR: 'text-danger',
+}
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'account.auth_backends.EmailBackend'
+]

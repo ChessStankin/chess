@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="card" style="width: 30%">
+<div class="card w-50">
     <div class="card-header">
         Регистрация
     </div>
@@ -13,7 +13,11 @@
                 {{ field }}
             </div>
             {% endfor %}
-            <input class="btn btn-primary w-100" type="submit" value="Зарегистрироваться"/>
+            <div class="form-group custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" name="remember_me" id="rememberMe">
+                <label class="custom-control-label" for="rememberMe">Запомнить это устройство для входа</label>
+            </div>
+            <input class="mt-4 btn btn-outline-primary w-100" type="submit" value="Зарегистрироваться"/>
         </form>
         <div class="w-100 text-center">
             <a href="/account/login/">Войти</a>

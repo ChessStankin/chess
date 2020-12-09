@@ -12,89 +12,84 @@
     </body>
 </html>
 <script>
-    let board = null
-    let game = new Chess()
-    let $status = $('#status')
-    let $fen = $('#fen')
-    let $pgn = $('#pgn')
+    var board = null
+var $board = $('#myBoard')
+var game = new Chess()
+var squareToHighlight = null
+var squareClass = 'square-55d63'
 
-    function onDragStart (source, piece, position, orientation) {
-        // do not pick up pieces if the game is over
-        if (game.game_over()) return false
+function removeHighlights (color) {
+  $board.find('.' + squareClass)
+    .removeClass('highlight-' + color)
+}
 
-        // only pick up pieces for the side to move
-        if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-            (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
-            return false
-        }
-    }
+function onDragStart (source, piece, position, orientation) {
+  // do not pick up pieces if the game is over
+  if (game.game_over()) return false
 
-    function onDrop (source, target) {
-        // see if the move is legal
-        var move = game.move({
-            from: source,
-            to: target,
-            promotion: 'q' // NOTE: always promote to a queen for example simplicity
-        })
+  // only pick up pieces for White
+  if (piece.search(/^b/) !== -1) return false
+}
 
-        // illegal move
-        if (move === null) return 'snapback'
+function makeRandomMove () {
+  var possibleMoves = game.moves({
+    verbose: true
+  })
 
-        updateStatus()
-    }
+  // game over
+  if (possibleMoves.length === 0) return
 
-    // update the board position after the piece snap
-    // for castling, en passant, pawn promotion
-    function onSnapEnd () {
-        board.position(game.fen())
-    }
+  var randomIdx = Math.floor(Math.random() * possibleMoves.length)
+  var move = possibleMoves[randomIdx]
+  game.move(move.san)
 
-    function updateStatus () {
-        var status = ''
+  // highlight black's move
+  removeHighlights('black')
+  $board.find('.square-' + move.from).addClass('highlight-black')
+  squareToHighlight = move.to
 
-        var moveColor = 'White'
-        if (game.turn() === 'b') {
-            moveColor = 'Black'
-        }
+  // update the board to the new position
+  board.position(game.fen())
+}
 
-        // checkmate?
-        if (game.in_checkmate()) {
-            status = 'Game over, ' + moveColor + ' is in checkmate.'
-        }
+function onDrop (source, target) {
+  // see if the move is legal
+  var move = game.move({
+    from: source,
+    to: target,
+    promotion: 'q' // NOTE: always promote to a queen for example simplicity
+  })
 
-        // draw?
-        else if (game.in_draw()) {
-            status = 'Game over, drawn position'
-        }
+  // illegal move
+  if (move === null) return 'snapback'
 
-        // game still on
-        else {
-            status = moveColor + ' to move'
+  // highlight white's move
+  removeHighlights('white')
+  $board.find('.square-' + source).addClass('highlight-white')
+  $board.find('.square-' + target).addClass('highlight-white')
 
-            // check?
-            if (game.in_check()) {
-            status += ', ' + moveColor + ' is in check'
-            }
-        }
+  // make random move for black
+  window.setTimeout(makeRandomMove, 250)
+}
 
-        $status.html(status)
-        $fen.html(game.fen())
-        $pgn.html(game.pgn())
-    }
+function onMoveEnd () {
+  $board.find('.square-' + squareToHighlight)
+    .addClass('highlight-black')
+}
 
-    let config = {
-        draggable: true,
-        position: 'start',
-        snapSpeed: 0,
-        moveSpeed: 0,
-        snapbackSpeed: 0,
-        appearSpeed: 0,
-        onDragStart: onDragStart,
-        onDrop: onDrop,
-        onSnapEnd: onSnapEnd
-    }
-    
-    board = Chessboard('myBoard', config)
+// update the board position after the piece snap
+// for castling, en passant, pawn promotion
+function onSnapEnd () {
+  board.position(game.fen())
+}
 
-    updateStatus()
+var config = {
+  draggable: true,
+  position: 'start',
+  onDragStart: onDragStart,
+  onDrop: onDrop,
+  onMoveEnd: onMoveEnd,
+  onSnapEnd: onSnapEnd
+}
+board = Chessboard('myBoard', config)
 </script>
